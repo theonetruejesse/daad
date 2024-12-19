@@ -9,5 +9,14 @@ class DiscordClient(discord.Client):
         if message.author == self.user:
             return
 
-        print(message.channel)
+        print(message)
         await message.channel.send(f"Hello {message.author}!")
+
+    # channel_ids across Discord are globally unique
+    async def send_message_to_channel(self, channel_id: int, content: str):
+        channel = self.get_channel(channel_id)
+        if channel is None:
+            print(f"Channel with ID {channel_id} not found.")
+            return
+
+        await channel.send(content)
