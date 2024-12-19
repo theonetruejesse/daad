@@ -10,7 +10,7 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 
-from daad.utils import Singleton
+from src.daad.utils.Singleton import Singleton
 
 # # Configure global logger
 # from kalshi_fun.utils import configure_logger, log_cache_status

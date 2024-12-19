@@ -1,16 +1,27 @@
 import os
 
+import discord
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from dotenv import load_dotenv
 
-from daad.Kalshi import ExchangeClient
-from daad.utils.helpers import get_file_path
+from src.daad.clients.Discord import DiscordClient
+from src.daad.clients.Kalshi import ExchangeClient
+from src.daad.utils.helpers import get_file_path
 
 load_dotenv()
 
 
-def init_exchange_client():
+def setup_discord_client():
+    intents = discord.Intents.default()
+    intents.message_content = True
+    client = DiscordClient(intents=intents)
+
+    client.run(os.getenv("DISCORD_TOKEN"))
+    return client
+
+
+def setup_exchange_client():
     """
     Initialize the Kalshi ExchangeClient.
     """
