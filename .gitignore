@@ -18,3 +18,5 @@ kalshi-pk.key
 kalshi_cache.sqlite
 
 data.json
+
+.vscode/

@@ -15,9 +15,9 @@ dependencies = [
     "tqdm>=4.67.1",
     "requests-cache>=1.2.1",
 ]
+
 [project.scripts]
 dev = "src.daad.main:run"
-
 
 [build-system]
 requires = ["hatchling"]

@@ -14,6 +14,7 @@
     to use `__call__` will result in a `TypeError` being raised.
 """
 
+
 class Singleton:
     def __init__(self, decorated):
         self._decorated = decorated
