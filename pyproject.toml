@@ -2,7 +2,7 @@
 name = "dasein-as-a-degenerate"
 version = "0.1.0"
 description = "Bloomberg Terminal for event contract degeneracy"
-readme = "README.md"
+# readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
     "cryptography>=44.0.0",
