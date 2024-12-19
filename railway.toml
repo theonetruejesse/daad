@@ -1,0 +1,6 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pip install ."
+
+[deploy]
+startCommand = "python -m src.daad.main"
