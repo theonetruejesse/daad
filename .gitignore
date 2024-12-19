@@ -20,3 +20,5 @@ kalshi_cache.sqlite
 data.json
 
 .vscode/
+
+.mypy_cache/

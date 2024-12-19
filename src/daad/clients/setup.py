@@ -13,6 +13,10 @@ load_dotenv()
 
 
 def setup_discord_client():
+    """
+    Initialize the Discord client.
+    """
+
     intents = discord.Intents.default()
     intents.message_content = True
     client = DiscordClient(intents=intents)
