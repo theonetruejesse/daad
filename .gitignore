@@ -6,19 +6,19 @@ dist/
 wheels/
 *.egg-info
 
-# Virtual environments
+# uv stuff
 .venv
 
 .python-version
 
 uv.lock
 
-kalshi-pk.key
+# Environment Variables
 .env
+
+# Cache
 kalshi_cache.sqlite
 
-data.json
-
+# Random Stuff
 .vscode/
-
 .mypy_cache/

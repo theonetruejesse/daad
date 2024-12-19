@@ -5,8 +5,8 @@
 - Make sure you have [uv](https://docs.astral.sh/uv/) installed.
 
 ### Keys
-- Add your Kalshi API key ID to the `.env` file; create a file called `kalshi-pk.key` in the root directory and add your private key into it.
-- Add your Discord key
+
+- You'll need to transform your Kalshi private key into a base64 string before adding it to the `.env` file; you can do this by running `base64 < your-private-key-file.key > file-string.b64`
 - TODO; cache instructions
 
 ## Installation
