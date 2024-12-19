@@ -3,7 +3,6 @@
 ## Requirements
 
 - Make sure you have [uv](https://docs.astral.sh/uv/) installed.
-- For deployment, you'll need to have [Railway](https://railway.app/) CLI installed.
 
 ### Keys
 
@@ -20,4 +19,5 @@
 
 ## Deployment
 
-- Push to the `main` branch then run `railway up` to deploy the latest changes.
+- Push to the `main` branch and railway will automatically deploy the latest changes.
+- You can also run `railway up` to deploy manually.
