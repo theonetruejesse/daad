@@ -27,7 +27,7 @@ class DiscordClient(discord.Client):
 
         await channel.send(content)
 
-    def is_valid_channel(message: discord.Message):
+    def is_valid_channel(self, message: discord.Message):
         TESTING_CHANNELS = [1317656187646513185]
         environment = os.getenv("environment")
 

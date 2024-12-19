@@ -10,8 +10,6 @@ from src.daad.clients.Discord import DiscordClient
 from src.daad.clients.Kalshi import ExchangeClient
 from src.daad.utils.helpers import get_file_path
 
-load_dotenv()
-
 
 def setup_discord_client():
     """
