@@ -6,7 +6,7 @@ class DiscordClient(discord.Client):
         print(f"Logged on as {self.user}!")
 
     async def on_message(self, message: discord.Message):
-        if message.author == self.user:
+        if message.author == self.user and not self.user.mentioned_in(message):
             return
 
         print(message)
