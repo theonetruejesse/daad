@@ -1,4 +1,8 @@
+from dotenv import load_dotenv
+
 from src.daad.clients.setup import setup_discord_client
+
+load_dotenv()
 
 
 def run():

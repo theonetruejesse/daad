@@ -15,6 +15,7 @@ uv.lock
 
 # Environment Variables
 .env
+.env.production
 
 # Cache
 kalshi_cache.sqlite
