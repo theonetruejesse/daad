@@ -32,8 +32,14 @@ class DiscordClient(discord.Client):
         environment = os.getenv("environment")
 
         if environment != "production" and message.channel.id not in TESTING_CHANNELS:
+            print(
+                f"[DEBUG] Ignoring message in channel {message.channel.id} (not in TESTING_CHANNELS)"
+            )
             return False
         elif environment == "production" and message.channel.id in TESTING_CHANNELS:
+            print(
+                f"[DEBUG] Ignoring message in TESTING_CHANNELS during production: {message.channel.id}"
+            )
             return False
 
         return True

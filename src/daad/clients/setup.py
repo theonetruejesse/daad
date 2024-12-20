@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import os
 
@@ -10,18 +11,33 @@ from src.daad.clients.Discord import DiscordClient
 from src.daad.clients.Kalshi import ExchangeClient
 from src.daad.utils.helpers import get_file_path
 
+discord_client = None
 
-def setup_discord_client():
+
+async def setup_discord_client():
     """
     Initialize the Discord client.
     """
+    global discord_client
+
+    if discord_client is not None:
+        return discord_client
+
+    print("Setting up Discord client")
 
     intents = discord.Intents.default()
     intents.message_content = True
     client = DiscordClient(intents=intents)
 
-    client.run(os.getenv("DISCORD_TOKEN"))
-    return client
+    discord_client = client  # Set the global client before starting it
+
+    # Log in the client
+    await client.login(os.getenv("DISCORD_TOKEN"))
+    # Connect in a separate task to avoid blocking
+    asyncio.create_task(client.connect())
+
+    print("Discord client setup complete")
+    return discord_client
 
 
 def setup_exchange_client():
