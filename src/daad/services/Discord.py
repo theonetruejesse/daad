@@ -11,7 +11,7 @@ class DiscordClient(discord.Client):
         if (
             message.author == self.user  # ignore messages from the bot itself
             or not self.user.mentioned_in(message)  # only when bot is pinged
-            or not self.is_valid_channel(message)  # prevents duplicate messages
+            or not self.__is_valid_channel(message)  # prevents duplicate messages
         ):
             return
 
@@ -27,7 +27,7 @@ class DiscordClient(discord.Client):
 
         await channel.send(content)
 
-    def is_valid_channel(self, message: discord.Message):
+    def __is_valid_channel(self, message: discord.Message):
         TESTING_CHANNELS = [1317656187646513185]
         environment = os.getenv("environment")
 
