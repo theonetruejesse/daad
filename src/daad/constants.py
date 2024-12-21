@@ -1,3 +1,3 @@
 import os
 
-__prod__ = os.getenv("environment") == "production"
+__prod__ = os.getenv("ENVIRONMENT") == "production"

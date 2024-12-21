@@ -1,6 +1,6 @@
-import os
-
 import discord
+
+from src.daad.constants import __prod__
 
 
 class Discord(discord.Client):
@@ -29,14 +29,13 @@ class Discord(discord.Client):
 
     def _is_valid_channel(self, message: discord.Message):
         TESTING_CHANNELS = [1317656187646513185]
-        environment = os.getenv("ENVIRONMENT")
 
-        if environment != "production" and message.channel.id not in TESTING_CHANNELS:
+        if not __prod__ and message.channel.id not in TESTING_CHANNELS:
             print(
                 f"[DEBUG] Ignoring message in channel {message.channel.id} (not in TESTING_CHANNELS)"
             )
             return False
-        elif environment == "production" and message.channel.id in TESTING_CHANNELS:
+        elif __prod__ and message.channel.id in TESTING_CHANNELS:
             print(
                 f"[DEBUG] Ignoring message in TESTING_CHANNELS during production: {message.channel.id}"
             )
