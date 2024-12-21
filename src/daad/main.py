@@ -1,29 +1,20 @@
 import asyncio
 
-import uvicorn
 from dotenv import load_dotenv
-from fastapi import FastAPI
 
-from src.daad.services.setup import setup_api_server, setup_discord_client
+from src.daad.clients.Discord.Client import DiscordClient
+from src.daad.clients.Server.Client import ServerClient
 
 # Load environment variables
 load_dotenv()
-
-# Initialize FastAPI app
-app = FastAPI()
-
-
-@app.get("/hello")
-async def hello():
-    return {"message": "Hello, World!"}
 
 
 def run():
     print("Dasein says hello!")
 
     async def main():
-        await setup_discord_client()
-        await setup_api_server()
+        await DiscordClient.instance()
+        await ServerClient.instance()
 
     # Handle the event loop
     try:

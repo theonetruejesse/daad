@@ -3,11 +3,9 @@ from typing import Optional
 
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-from src.daad.services.kalshi.Requests import KalshiRequests
-from src.daad.services.utils.Singleton import Singleton
+from src.daad.clients.Kalshi.Requests import KalshiRequests
 
 
-@Singleton
 class KalshiExchange(KalshiRequests):
     def __init__(
         self,
