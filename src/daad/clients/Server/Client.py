@@ -2,6 +2,7 @@ import uvicorn
 
 from src.daad.clients.Server.AppServer import AppServer
 from src.daad.clients.utils.AppClient import AppClient
+from src.daad.constants import PORT
 
 
 class ServerClient(AppClient):
@@ -10,7 +11,7 @@ class ServerClient(AppClient):
             return self.client
 
         app = AppServer()
-        config = uvicorn.Config(app(), host="0.0.0.0", port=8000)
+        config = uvicorn.Config(app(), host="0.0.0.0", port=PORT)
         server = uvicorn.Server(config)
         self.client = server
         await server.serve()
