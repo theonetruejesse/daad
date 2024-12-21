@@ -7,9 +7,9 @@ import uvicorn
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
+from daad.services.kalshi.Exchange import KalshiExchange
 from src.daad.services.api import API
 from src.daad.services.Discord import DiscordClient
-from src.daad.services.Kalshi import ExchangeClient
 from src.daad.services.utils.helpers import get_file_path
 
 _discord_client = None
@@ -24,8 +24,6 @@ async def setup_discord_client():
     if _discord_client is not None:
         return _discord_client
 
-    print("Setting up Discord client")
-
     intents = discord.Intents.default()
     intents.message_content = True
     client = DiscordClient(intents=intents)
@@ -37,7 +35,6 @@ async def setup_discord_client():
     # Connect in a separate task to avoid blocking
     asyncio.create_task(client.connect())
 
-    print("Discord client setup complete")
     return _discord_client
 
 
@@ -69,7 +66,7 @@ def setup_exchange_client():
         )
         return private_key
 
-    return ExchangeClient.instance(
+    return KalshiExchange.instance(
         exchange_api_base=prod_api_base,
         key_id=prod_key_id,
         private_key=prod_private_key,
