@@ -1,6 +1,6 @@
 import discord
 
-from src.daad.constants import __prod__
+from src.daad.constants import TESTING_CHANNELS, __prod__
 
 
 class DiscordBot(discord.Client):
@@ -18,17 +18,7 @@ class DiscordBot(discord.Client):
         print(message)
         await message.channel.send(f"Hello {message.author}!")
 
-    # # channel_ids across Discord are globally unique
-    # async def send_message_to_channel(self, channel_id: int, content: str):
-    #     channel = self.get_channel(channel_id)
-    #     if channel is None:
-    #         print(f"Channel with ID {channel_id} not found.")
-    #         return
-
-    #     await channel.send(content)
-
     def _is_valid_channel(self, message: discord.Message):
-        TESTING_CHANNELS = [1317656187646513185]
 
         if not __prod__ and message.channel.id not in TESTING_CHANNELS:
             print(

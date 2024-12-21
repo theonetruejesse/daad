@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from src.daad.clients.Discord.Client import DiscordClient
+from src.daad.constants import DAILY_LOG_CHANNEL
 
 
 class AppServer:
@@ -17,7 +18,7 @@ class AppServer:
         async def message():
             discord_client = await DiscordClient.instance()
             await discord_client.send_message_to_channel(
-                1320122496363532310, "Hello, World!"
+                DAILY_LOG_CHANNEL, "Hello, World!"
             )
             return {"message": "Discord message sent"}
 
