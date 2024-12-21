@@ -3,27 +3,31 @@ import base64
 import os
 
 import discord
+import uvicorn
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from dotenv import load_dotenv
 
-from src.daad.clients.Discord import DiscordClient
-from src.daad.clients.Kalshi import ExchangeClient
+from src.daad.services.api import API
+from src.daad.services.Discord import DiscordClient
+from src.daad.services.Kalshi import ExchangeClient
 from src.daad.utils.helpers import get_file_path
+
+
+async def setup_api_server():
+    config = uvicorn.Config(API, host="0.0.0.0", port=8000)
+    server = uvicorn.Server(config)
+    await server.serve()
+
 
 discord_client = None
 
 
 async def setup_discord_client():
-    """
-    Initialize the Discord client.
-    """
     global discord_client
 
     if discord_client is not None:
         return discord_client
-
-    print("Setting up Discord client")
 
     intents = discord.Intents.default()
     intents.message_content = True
@@ -36,7 +40,6 @@ async def setup_discord_client():
     # Connect in a separate task to avoid blocking
     asyncio.create_task(client.connect())
 
-    print("Discord client setup complete")
     return discord_client
 
 
