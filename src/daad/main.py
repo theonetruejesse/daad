@@ -22,7 +22,6 @@ def run():
     print("Dasein says hello!")
 
     async def main():
-        # Start the Discord client
         await setup_discord_client()
         await setup_api_server()
 
