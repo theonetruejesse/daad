@@ -3,7 +3,7 @@ import discord
 from src.daad.constants import __prod__
 
 
-class Discord(discord.Client):
+class DiscordBot(discord.Client):
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
 
@@ -18,14 +18,14 @@ class Discord(discord.Client):
         print(message)
         await message.channel.send(f"Hello {message.author}!")
 
-    # channel_ids across Discord are globally unique
-    async def send_message_to_channel(self, channel_id: int, content: str):
-        channel = self.get_channel(channel_id)
-        if channel is None:
-            print(f"Channel with ID {channel_id} not found.")
-            return
+    # # channel_ids across Discord are globally unique
+    # async def send_message_to_channel(self, channel_id: int, content: str):
+    #     channel = self.get_channel(channel_id)
+    #     if channel is None:
+    #         print(f"Channel with ID {channel_id} not found.")
+    #         return
 
-        await channel.send(content)
+    #     await channel.send(content)
 
     def _is_valid_channel(self, message: discord.Message):
         TESTING_CHANNELS = [1317656187646513185]
