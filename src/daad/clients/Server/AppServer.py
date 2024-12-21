@@ -11,8 +11,7 @@ class AppServer:
         async def hello():
             return {"message": "Hello, World!"}
 
-    @property
-    def API(self):
+    def __call__(self):
         return self.app
 
 

@@ -4,3 +4,9 @@ buildCommand = "pip install ."
 
 [deploy]
 startCommand = "python -m src.daad.main"
+
+# cron jobs
+# [tasks]
+# [tasks.daily_task]
+#   schedule = "0 3 * * *" # Runs daily at 3 AM
+#   command = "python -m src.daad.main"

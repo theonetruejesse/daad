@@ -9,13 +9,7 @@ from src.daad.clients.utils.AppClient import AppClient
 from src.daad.clients.utils.helpers import get_file_path
 
 
-@AppClient
-class KalshiClient:
-    def get_client(self):
-        if self.client is None:
-            self._setup()
-        return self.client
-
+class KalshiClient(AppClient):
     async def _setup(self):
         if self.client is not None:
             return self.client

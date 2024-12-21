@@ -29,7 +29,7 @@ class Discord(discord.Client):
 
     def _is_valid_channel(self, message: discord.Message):
         TESTING_CHANNELS = [1317656187646513185]
-        environment = os.getenv("environment")
+        environment = os.getenv("ENVIRONMENT")
 
         if environment != "production" and message.channel.id not in TESTING_CHANNELS:
             print(

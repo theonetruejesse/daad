@@ -3,12 +3,11 @@ import os
 
 import discord
 
-from src.daad.clients.Discord import Discord
+from src.daad.clients.Discord.Discord import Discord
 from src.daad.clients.utils.AppClient import AppClient
 
 
-@AppClient
-class DiscordClient:
+class DiscordClient(AppClient):
     async def _setup(self):
         if self.client is not None:
             return self.client
@@ -23,10 +22,4 @@ class DiscordClient:
         asyncio.create_task(client.connect())
 
         self.client = client
-        return self.client
-
-    def get_client(self):
-        if self.client is None:
-            self._setup()
-
         return self.client

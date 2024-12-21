@@ -13,8 +13,15 @@ def run():
     print("Dasein says hello!")
 
     async def main():
-        await DiscordClient.instance()
-        await ServerClient.instance()
+        # Start both clients concurrently
+        await asyncio.gather(DiscordClient.instance(), ServerClient.instance())
+
+        # Keep the program running
+        try:
+            await asyncio.Future()  # run forever
+        except KeyboardInterrupt:
+            # Graceful shutdown could be implemented here
+            pass
 
     # Handle the event loop
     try:
@@ -24,7 +31,12 @@ def run():
         asyncio.set_event_loop(loop)
 
     # Run the main function
-    loop.run_until_complete(main())
+    try:
+        loop.run_until_complete(main())
+    except KeyboardInterrupt:
+        loop.close()
+    finally:
+        loop.close()
 
 
 if __name__ == "__main__":

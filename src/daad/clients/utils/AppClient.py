@@ -2,34 +2,53 @@ from abc import abstractmethod
 
 
 class AppClient:
-    @abstractmethod
-    def get_client(self):
-        pass
-
-    @abstractmethod
-    def _setup(self):
-        pass
-
     """
-        AppClient is a singleton class that ensures the client is initialized only once.
-        https://stackoverflow.com/questions/31875/is-there-a-simple-elegant-way-to-define-singletons
+    AppClient is a singleton class that ensures the client is initialized only once.
+    Setups, inits are async to make sure runtime is not blocked by any singular client.
     """
 
-    def __init__(self, decorated):
+    _instances = {}  # Store instances per class
+    _locks = {}  # Store locks per class
+
+    def __init__(self):
         self.client = None
-        self._setup()
-        # singleton pattern
-        self._decorated = decorated
-        self._instance = None
-        self._lock = False  # Prevent reinitialization
 
-    def instance(self, *args, **kwargs):
-        if self._instance is None:
-            if self._lock:  # Avoid reinitializing if already called
-                raise RuntimeError("Instance already exists; cannot reinitialize.")
-            self._lock = True
-            self._instance = self._decorated(*args, **kwargs)
-        return self._instance
+    async def get_client(self):
+        if self.client is None:
+            await self._setup()
+        return self.client
+
+    @abstractmethod
+    async def _setup(self):
+        pass
+
+    """Singleton Pattern"""
+
+    @classmethod
+    async def instance(cls):
+        # Initialize class-specific tracking if not exists
+        if cls not in cls._instances:
+            cls._locks[cls] = False
+            cls._instances[cls] = None
+
+        if cls._instances[cls] is None:
+            if cls._locks[cls]:
+                raise RuntimeError(
+                    f"Instance of {cls.__name__} is being initialized; cannot reinitialize."
+                )
+            cls._locks[cls] = True
+            cls._instances[cls] = cls()
+            await cls._instances[cls]._setup()
+
+        return cls._instances[cls]
+
+    def __new__(cls, *args, **kwargs):
+        # Prevent direct instantiation
+        if cls._instances.get(cls) is not None:
+            raise RuntimeError(
+                f"{cls.__name__} is a singleton. Use {cls.__name__}.instance() instead."
+            )
+        return super().__new__(cls)
 
     def __call__(self, *args, **kwargs):
         if self._instance is None:

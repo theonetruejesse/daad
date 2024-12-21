@@ -21,3 +21,9 @@
 
 - Push to the `main` branch and railway will automatically deploy the latest changes.
 - You can also run `railway up` to deploy manually.
+
+## TODOS
+
+- fix the src import issue (pyproject.toml based)
+- singleton pattern for all clients
+- fix your vim setup
