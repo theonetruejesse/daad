@@ -1,8 +1,12 @@
 # Dasein-as-a-Degenerate
 
+## Notes
+Using RabbitMQ for the hell of it.
+
 ## Requirements
 
 - Make sure you have [uv](https://docs.astral.sh/uv/) installed.
+- Make sure you have Docker (needed for RabbitMQ) installed and running.
 
 ### Keys
 
@@ -25,5 +29,6 @@
 ## TODOS
 
 - fix the src import issue (pyproject.toml based)
-- singleton pattern for all clients
-- fix your vim setup
+- toml setup for dev dependencies
+- fix my vim setup
+- dockerize rabbitmq approach

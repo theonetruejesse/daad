@@ -5,6 +5,9 @@ buildCommand = "pip install ."
 [deploy]
 startCommand = "python -m src.daad.main"
 
+[services.rabbitmq]
+plugin = "rabbitmq"
+
 # cron jobs
 # [tasks]
 # [tasks.daily_task]
