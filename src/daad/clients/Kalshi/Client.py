@@ -4,9 +4,9 @@ import os
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 
+from src.daad.clients.AppClient import AppClient
 from src.daad.clients.Kalshi.Exchange import KalshiExchange
-from src.daad.clients.utils.AppClient import AppClient
-from src.daad.clients.utils.helpers import get_file_path
+from src.daad.helpers import get_file_path
 
 
 class KalshiClient(AppClient):
@@ -39,3 +39,6 @@ class KalshiClient(AppClient):
             backend=default_backend(),
         )
         return private_key
+
+    async def cleanup(self):
+        pass

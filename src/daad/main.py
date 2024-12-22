@@ -24,8 +24,7 @@ def run():
         try:
             # Start both clients concurrently
             clients = await asyncio.gather(
-                # DiscordClient.instance(),
-                ServerClient.instance()
+                DiscordClient.instance(), ServerClient.instance()
             )
 
             # Keep the program running
@@ -42,6 +41,8 @@ def run():
                 )
             except asyncio.TimeoutError:
                 print("Cleanup timed out, forcing exit...")
+            finally:
+                print("Cleanup complete")
 
     # Handle the event loop
     try:

@@ -32,3 +32,4 @@ Using RabbitMQ for the hell of it.
 - toml setup for dev dependencies
 - fix my vim setup
 - dockerize rabbitmq approach
+- cleanup

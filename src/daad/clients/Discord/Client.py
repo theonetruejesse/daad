@@ -3,8 +3,8 @@ import os
 
 import discord
 
+from src.daad.clients.AppClient import AppClient
 from src.daad.clients.Discord.Bot import DiscordBot
-from src.daad.clients.utils.AppClient import AppClient
 
 
 class DiscordClient(AppClient):
@@ -31,3 +31,12 @@ class DiscordClient(AppClient):
             return
 
         await channel.send(content)
+
+    async def cleanup(self):
+        if self.client:
+            try:
+                await self.client.close()
+                # Wait a bit for the connection to close
+                await asyncio.sleep(1)
+            except Exception as e:
+                print(f"Error during Discord cleanup: {e}")
