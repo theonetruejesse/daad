@@ -4,6 +4,9 @@ from src.daad.constants import TESTING_CHANNELS, __prod__
 
 
 class DiscordBot(discord.Client):
+    def __init__(self, intents: discord.Intents):
+        super().__init__(intents=intents)
+
     async def on_ready(self):
         print(f"Logged on as {self.user}!")
 
@@ -19,7 +22,6 @@ class DiscordBot(discord.Client):
         await message.channel.send(f"Hello {message.author}!")
 
     def _is_valid_channel(self, message: discord.Message):
-
         if not __prod__ and message.channel.id not in TESTING_CHANNELS:
             print(
                 f"[DEBUG] Ignoring message in channel {message.channel.id} (not in TESTING_CHANNELS)"

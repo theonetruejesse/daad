@@ -22,7 +22,7 @@ class AppServer:
             )
             return {"message": "Discord message sent"}
 
-    def __call__(self):
+    def get_app(self):
         return self.app
 
 

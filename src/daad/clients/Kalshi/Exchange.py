@@ -28,12 +28,11 @@ class KalshiExchange(KalshiRequests):
         self.events_url = "/events"
         self.series_url = "/series"
         self.portfolio_url = "/portfolio"
-        self.warm_up_cache()
 
     def warm_up_cache(self):
         """Warming up the cache with a lightweight, cached call."""
         try:
-            self.get_exchange_status()  # Replace with a lightweight cached API call
+            self.get_exchange_status()
             print("Cache warmed up")
         except Exception as e:
             print(f"Cache warm-up failed: {e}")

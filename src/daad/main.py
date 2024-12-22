@@ -22,7 +22,7 @@ def run():
     async def main():
         clients = []
         try:
-            # Start both clients concurrently
+            # Start clients concurrently
             clients = await asyncio.gather(
                 DiscordClient.instance(), ServerClient.instance()
             )
