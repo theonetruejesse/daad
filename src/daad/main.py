@@ -1,12 +1,12 @@
 import asyncio
-import subprocess
 
 from dotenv import load_dotenv
 
 from src.daad.clients.Discord.Client import DiscordClient
 from src.daad.clients.Server.Client import ServerClient
-from src.daad.constants import __prod__
+from src.daad.constants import TEST_RABBITMQ_PROD, __prod__
 from src.daad.helpers import get_file_path
+from src.daad.start import start_rabbitmq
 
 # Load environment variables
 load_dotenv()
@@ -15,9 +15,8 @@ load_dotenv()
 def run():
     print("Dasein says hello!\n")
 
-    if not __prod__:
-        # starts rabbitmq on local machine
-        subprocess.run(["bash", get_file_path("start_rabbitmq.sh")], check=True)
+    if not TEST_RABBITMQ_PROD and not __prod__:
+        start_rabbitmq()
 
     async def main():
         clients = []
