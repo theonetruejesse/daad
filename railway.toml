@@ -1,15 +1,15 @@
 [build]
-# builder = "nixpacks"
-builder = "INVALID_BUILDER_NAME"
+builder = "nixpacks"
 buildCommand = "pip install ."
 
 [deploy]
 startCommand = "python -m src.daad.main"
 
 [services.rabbitmq]
-plugin = "rabbitmq"
-name = "rabbitmq"
-
+image = "rabbitmq:3-management"
+healthcheck.path = "/health"
+healthcheck.interval = "15s"
+healthcheck.timeout = "5s"
 # cron jobs
 # [tasks]
 # [tasks.daily_task]
