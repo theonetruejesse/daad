@@ -25,18 +25,3 @@ class ServerClient(AppClient, AppServer):
         # Start server in a separate task to avoid blocking
         asyncio.create_task(self.client.serve())
         return self.client
-
-    async def cleanup(self):
-        if self.client:
-            print("Shutting down server...")
-            self.client.should_exit = True
-            try:
-                await asyncio.wait_for(self.client.shutdown(), timeout=5.0)
-            except asyncio.TimeoutError:
-                print("Server shutdown timed out")
-
-            # Force cleanup any remaining server tasks
-            if hasattr(self.client, "servers"):
-                for server in self.client.servers:
-                    server.close()
-                    await server.wait_closed()

@@ -37,12 +37,3 @@ class DiscordClient(AppClient, DiscordBot):
             return
 
         await channel.send(content)
-
-    async def cleanup(self):
-        if self.client:
-            try:
-                await self.close()
-                # Wait a bit for the connection to close
-                await asyncio.sleep(1)
-            except Exception as e:
-                print(f"Error during Discord cleanup: {e}")

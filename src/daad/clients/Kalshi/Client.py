@@ -56,8 +56,5 @@ class KalshiClient(AppClient, KalshiExchange):
         )
         return private_key
 
-    async def cleanup(self):
-        pass
-
     def get_client(self):
         return self.client

@@ -22,10 +22,6 @@ class AppClient:
     async def _setup(self):
         pass
 
-    @abstractmethod
-    async def cleanup(self):
-        pass
-
     """Singleton Pattern"""
 
     @classmethod
