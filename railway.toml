@@ -1,5 +1,6 @@
 [build]
-builder = "nixpacks"
+# builder = "nixpacks"
+builder = "INVALID_BUILDER_NAME"
 buildCommand = "pip install ."
 
 [deploy]
@@ -7,6 +8,7 @@ startCommand = "python -m src.daad.main"
 
 [services.rabbitmq]
 plugin = "rabbitmq"
+name = "rabbitmq"
 
 # cron jobs
 # [tasks]
