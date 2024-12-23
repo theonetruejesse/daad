@@ -11,8 +11,6 @@ from src.daad.helpers import get_file_path
 
 class KalshiClient(AppClient, KalshiExchange):
     def __init__(self):
-        AppClient.__init__(self)
-        self.client = None
         self.key_id = None
         self.private_key = None
         self.exchange_url = "/exchange"
@@ -22,10 +20,7 @@ class KalshiClient(AppClient, KalshiExchange):
         self.portfolio_url = "/portfolio"
 
     async def _setup(self):
-        if self.client is not None:
-            return self.client
-
-        self.private_key = self._load_private_key_from_env("KALSHI_PK")
+        self.private_key = self._decode_private_key("KALSHI_PK")
         self.key_id = os.getenv("KALSHI_KEY_ID")
         prod_api_base = "https://api.elections.kalshi.com/trade-api/v2"
 
@@ -42,7 +37,7 @@ class KalshiClient(AppClient, KalshiExchange):
         self.warm_up_cache()
         return self.client
 
-    def _load_private_key_from_env(self, env_var_name):
+    def _decode_private_key(self, env_var_name):
         encoded_key = os.getenv(env_var_name)
         if not encoded_key:
             raise ValueError(

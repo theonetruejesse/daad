@@ -5,18 +5,11 @@ class AppClient:
     """
     AppClient is a singleton class that ensures the client is initialized only once.
     Setups, inits are async to make sure runtime is not blocked by any singular client.
+    This class should be treated as a configuration layer.
     """
 
     _instances = {}  # Store instances per class
     _locks = {}  # Store locks per class
-
-    def __init__(self):
-        self.client = None
-
-    async def get_client(self):
-        if self.client is None:
-            await self._setup()
-        return self.client
 
     @abstractmethod
     async def _setup(self):

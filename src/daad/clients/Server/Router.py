@@ -4,7 +4,7 @@ from src.daad.clients.Discord.Client import DiscordClient
 from src.daad.constants import DAILY_LOG_CHANNEL
 
 
-class AppServer:
+class ServerRouter:
     def __init__(self):
         self.app = FastAPI()
         self.routes()

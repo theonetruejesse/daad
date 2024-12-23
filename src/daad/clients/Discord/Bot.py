@@ -5,7 +5,7 @@ from src.daad.constants import TESTING_CHANNELS, __prod__
 
 class DiscordBot(discord.Client):
     def __init__(self, intents: discord.Intents):
-        super().__init__(intents=intents)
+        super().__init__(intents=intents)  # inits discord.Client
 
     async def on_ready(self):
         print(f"Logged on as {self.user}!")

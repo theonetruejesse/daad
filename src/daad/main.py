@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from src.daad.clients.Discord.Client import DiscordClient
 from src.daad.clients.Server.Client import ServerClient
 from src.daad.constants import TEST_RABBITMQ_PROD, __prod__
-from src.daad.helpers import get_file_path
 from src.daad.start import start_rabbitmq
 
 # Load environment variables
@@ -15,8 +14,8 @@ load_dotenv()
 def run():
     print("Dasein says hello!\n")
 
-    if not TEST_RABBITMQ_PROD and not __prod__:
-        start_rabbitmq()
+    # if not TEST_RABBITMQ_PROD and not __prod__:
+    #     start_rabbitmq()
 
     async def main():
         clients = []
@@ -26,8 +25,10 @@ def run():
                 DiscordClient.instance(), ServerClient.instance()
             )
 
-            # Keep the program running
-            await asyncio.Future()  # run forever
+            """ todo; clean this entire section up, including the cleanup section """
+            # Keep the program running forver
+            await asyncio.Future()
+
         except KeyboardInterrupt:
             print("\nShutting down gracefully...")
         finally:
