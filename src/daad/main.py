@@ -3,9 +3,9 @@ import asyncio
 from dotenv import load_dotenv
 
 from src.daad.clients.Discord.Client import DiscordClient
+from src.daad.clients.RabbitMQ.Client import RabbitMQClient
 from src.daad.clients.Server.Client import ServerClient
 from src.daad.constants import TEST_RABBITMQ_PROD, __prod__
-from src.daad.start import start_rabbitmq
 
 # Load environment variables
 load_dotenv()
@@ -14,15 +14,15 @@ load_dotenv()
 def run():
     print("Dasein says hello!\n")
 
-    # if not TEST_RABBITMQ_PROD and not __prod__:
-    #     start_rabbitmq()
-
     async def main():
         clients = []
         try:
-            # Start clients concurrently
+            # Start rabbitmq first as other clients depend on it
+            await RabbitMQClient.instance()
+            # Start other clients concurrently
             clients = await asyncio.gather(
-                DiscordClient.instance(), ServerClient.instance()
+                DiscordClient.instance(),
+                ServerClient.instance(),
             )
 
             """ todo; clean this entire section up, including the cleanup section """

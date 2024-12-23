@@ -1,56 +1,57 @@
-import asyncio
+import os
+import subprocess
 
 import aio_pika
-import aiohttp
+
+from src.daad.clients.AppClient import AppClient
+from src.daad.clients.RabbitMQ.Broker import RabbitMQBroker
+from src.daad.constants import RABBITMQ_CONFIG, TEST_RABBITMQ_PROD, __prod__
+from src.daad.helpers import get_file_path
 
 
-class RabbitMQClient:
-    _instance = None
+class RabbitMQClient(AppClient):
+    def __init__(self):
+        """
+        can't inherit broker directly because of metaclass conflict:
+        the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
+        """
+        self.broker = RabbitMQBroker()
 
-    @classmethod
-    async def instance(cls):
-        if cls._instance is None:
-            cls._instance = RabbitMQClient()
-            await cls._instance.start()
-        return cls._instance
+    async def _setup(self):
+        if not __prod__ and not TEST_RABBITMQ_PROD:
+            self._start_local_rabbitmq()
 
-    async def start(self):
-        self.connection = await aio_pika.connect_robust("amqp://guest:guest@localhost/")
-        self.channel = await self.connection.channel()
-        self.queue = await self.channel.declare_queue("task_queue", durable=True)
+        connection = await aio_pika.connect_robust(self._get_connection_string())
+        self.broker.channel = await connection.channel()
+        print(f"RabbitMQClient connected to broker channel: {self.broker.channel}")
 
-        # Start consuming tasks in the background
-        asyncio.create_task(self.consume_tasks())
-
-    async def consume_tasks(self):
-        async with self.queue.iterator() as queue_iter:
-            async for message in queue_iter:
-                async with message.process():
-                    # Handle the message asynchronously
-                    await self.handle_message(message)
-
-    async def publish_task(self, task_data):
-        await self.channel.default_exchange.publish(
-            aio_pika.Message(body=task_data.encode()),
-            routing_key="task_queue",
+    def _start_local_rabbitmq(self):
+        env = os.environ.copy()
+        env.update(
+            {
+                "RABBITMQ_DEFAULT_USER": RABBITMQ_CONFIG["user"],
+                "RABBITMQ_DEFAULT_PASS": RABBITMQ_CONFIG["password"],
+                "RABBITMQ_PORT": RABBITMQ_CONFIG["port"],
+                "RABBITMQ_MANAGEMENT_PORT": RABBITMQ_CONFIG["management_port"],
+            }
         )
-        print(f"Published task: {task_data}")
+        subprocess.run(
+            ["bash", get_file_path("start_rabbitmq.sh")], env=env, check=True
+        )
 
-    async def handle_message(self, message):
-        # Simulate an async call to a generative AI API
-        data = message.body.decode()
-        print(f"Received task: {data}")
-        result = await self.call_ai_api(data)
-        print(f"AI Response: {result}")
+    def _get_connection_string(self):
+        if __prod__:
+            return os.getenv("RABBITMQ_URL")
+        else:
+            return f"amqp://{RABBITMQ_CONFIG['user']}:{RABBITMQ_CONFIG['password']}@{RABBITMQ_CONFIG['host']}:{RABBITMQ_CONFIG['port']}/"
 
-    async def call_ai_api(self, data):
-        # Asynchronous HTTP call to a generative AI API
-        async with aiohttp.ClientSession() as session:
-            async with session.post(
-                "https://api.openai.com/v1/endpoint", json={"input": data}
-            ) as response:
-                if response.status == 200:
-                    return await response.json()
-                else:
-                    print(f"API Error: {response.status}")
-                    return {"error": f"API call failed with status {response.status}"}
+    """ Broker Bindings """
+
+    async def publish(self, routing_key: str, message: str):
+        await self.broker.publish(routing_key, message)
+
+    async def consume(self, queue_name: str, routing_key: str, callback):
+        await self.broker.consume(queue_name, routing_key, callback)
+
+    async def start_consuming(self, queue_name: str, routing_key: str, callback):
+        await self.broker.start_consuming(queue_name, routing_key, callback)

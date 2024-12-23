@@ -23,7 +23,6 @@ elif ! docker ps | grep -q rabbitmq; then
 fi
 
 # Wait for RabbitMQ to be fully running
-echo "Waiting for RabbitMQ to start..."
 until curl -s -f http://localhost:${RABBITMQ_MANAGEMENT_PORT} >/dev/null 2>&1; do
     sleep 1
 done
