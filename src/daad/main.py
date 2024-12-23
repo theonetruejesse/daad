@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from src.daad.clients.Discord.Client import DiscordClient
 from src.daad.clients.RabbitMQ.Client import RabbitMQClient
 from src.daad.clients.Server.Client import ServerClient
-from src.daad.constants import TEST_RABBITMQ_PROD, __prod__
+from src.daad.constants import __prod__
 
 # Load environment variables
 load_dotenv()
