@@ -26,7 +26,6 @@ dependencies = [
 [project.scripts]
 start = "src.daad.main:run"
 dev = "src.daad.watch:run"
-testRabbit = "src.daad.testRabbit:run"
 
 [build-system]
 requires = ["hatchling"]
