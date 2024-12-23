@@ -5,7 +5,7 @@ import aio_pika
 
 from src.daad.clients.AppClient import AppClient
 from src.daad.clients.RabbitMQ.Broker import RabbitMQBroker
-from src.daad.constants import IS_TEST_RABBITMQ_PROD, LOCAL_RABBITMQ_CONFIG, __prod__
+from src.daad.constants import IS_TESTING_RABBITMQ_PROD, LOCAL_RABBITMQ_CONFIG, __prod__
 from src.daad.helpers import get_file_path
 
 
@@ -18,7 +18,7 @@ class RabbitMQClient(AppClient):
         self.broker = RabbitMQBroker()
 
     async def _setup(self):
-        if not __prod__ and not IS_TEST_RABBITMQ_PROD:
+        if not __prod__ and not IS_TESTING_RABBITMQ_PROD:
             self._start_local_rabbitmq()
 
         connection = await aio_pika.connect_robust(self._get_connection_string())
@@ -43,6 +43,8 @@ class RabbitMQClient(AppClient):
     def _get_connection_string(self):
         config = LOCAL_RABBITMQ_CONFIG
         if __prod__:
+            return os.getenv("RABBITMQ_PRIVATE_URL")
+        elif IS_TESTING_RABBITMQ_PROD:
             return os.getenv("RABBITMQ_URL")
         else:
             return f"amqp://{config['user']}:{config['password']}@{config['host']}:{config['port']}/"

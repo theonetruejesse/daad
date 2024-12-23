@@ -13,7 +13,7 @@ DAILY_LOG_CHANNEL = 1320122496363532310
 
 # RabbitMQ credentials
 
-IS_TEST_RABBITMQ_PROD = False  # change this for when testing connections
+IS_TESTING_RABBITMQ_PROD = False  # change this for when testing connections
 
 LOCAL_RABBITMQ_CONFIG = {
     "user": "guest",
