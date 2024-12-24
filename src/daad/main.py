@@ -2,9 +2,9 @@ import asyncio
 
 from dotenv import load_dotenv
 
-from src.daad.clients.Discord.Client import DiscordClient
-from src.daad.clients.RabbitMQ.Client import RabbitMQClient
-from src.daad.clients.Server.Client import ServerClient
+from src.daad.clients.Discord.DiscordClient import DiscordClient
+from src.daad.clients.RabbitMQ.RabbitMQClient import RabbitMQClient
+from src.daad.clients.Server.ServerClient import ServerClient
 from src.daad.constants import __prod__
 
 # Load environment variables
@@ -15,18 +15,19 @@ def run():
     print("Dasein says hello!\n")
 
     async def main():
-        clients = []
         try:
-            # Start rabbitmq first as other clients depend on it
-            await RabbitMQClient.instance()
-            # Start other clients concurrently
-            clients = await asyncio.gather(
-                DiscordClient.instance(),
-                ServerClient.instance(),
+            # Initialize RabbitMQ first since others depend on it
+            rabbitmq = await RabbitMQClient.instance()
+
+            # Initialize other clients concurrently
+            discord, server = await asyncio.gather(
+                DiscordClient.instance(), ServerClient.instance()
             )
 
-            """ todo; clean this entire section up, including the cleanup section """
-            # Keep the program running forver
+            # Store all clients for cleanup
+            clients = [rabbitmq, discord, server]
+
+            # Keep the program running forever
             await asyncio.Future()
 
         except KeyboardInterrupt:
@@ -46,12 +47,11 @@ def run():
 
     # Handle the event loop
     try:
-        loop = asyncio.get_running_loop()  # Get the current event loop
-    except RuntimeError:  # If no loop exists, create one
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
-    # Run the main function
     try:
         loop.run_until_complete(main())
     except KeyboardInterrupt:

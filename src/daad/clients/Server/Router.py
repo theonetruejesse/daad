@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.daad.clients.Discord.Client import DiscordClient
+from src.daad.clients.Discord.DiscordClient import DiscordClient
 from src.daad.constants import DAILY_LOG_CHANNEL
 
 
