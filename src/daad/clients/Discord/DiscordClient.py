@@ -1,6 +1,7 @@
 import asyncio
 import os
 
+import aio_pika
 import discord
 
 from src.daad.clients.AppClient import AppClient
@@ -39,7 +40,7 @@ class DiscordClient(DiscordBot, AppClient):
             callback=self._handle_rabbitmq_message,
         )
 
-    async def _handle_rabbitmq_message(self, message):
+    async def _handle_rabbitmq_message(self, message: aio_pika.Message):
         """Handle incoming RabbitMQ messages"""
         try:
             # Decode message content
