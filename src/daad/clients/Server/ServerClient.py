@@ -1,8 +1,6 @@
-# ServerClient.py
 import asyncio
 
 import uvicorn
-from fastapi import FastAPI
 
 from src.daad.clients.AppClient import AppClient
 from src.daad.clients.RabbitMQ.RabbitMQClient import RabbitMQClient
@@ -12,7 +10,7 @@ from src.daad.constants import PORT
 
 class ServerClient(ServerRouter, AppClient):
     def __init__(self):
-        self.rabbitmq = None
+        self.rabbitmq: RabbitMQClient | None = None
         ServerRouter.__init__(self)
 
     async def _setup(self):

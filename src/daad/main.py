@@ -2,6 +2,7 @@ import asyncio
 
 from dotenv import load_dotenv
 
+from src.daad.clients.Cron.CronClient import CronClient
 from src.daad.clients.Discord.DiscordClient import DiscordClient
 from src.daad.clients.RabbitMQ.RabbitMQClient import RabbitMQClient
 from src.daad.clients.Server.ServerClient import ServerClient
@@ -20,6 +21,7 @@ async def main():
             RabbitMQClient.instance(),
             DiscordClient.instance(),
             ServerClient.instance(),
+            CronClient.instance(),
         )
 
         # Keep the program running
