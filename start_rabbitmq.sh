@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Use environment variables with defaults
-RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-guest}
-RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-guest}
+RABBITMQ_USER=${RABBITMQ_USER:-guest}
+RABBITMQ_PASS=${RABBITMQ_PASS:-guest}
 RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
 RABBITMQ_MANAGEMENT_PORT=${RABBITMQ_MANAGEMENT_PORT:-15672}
 
@@ -17,8 +17,8 @@ elif ! docker ps | grep -q rabbitmq; then
         --hostname rabbitmq \
         -p ${RABBITMQ_PORT}:5672 \
         -p ${RABBITMQ_MANAGEMENT_PORT}:15672 \
-        -e RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER} \
-        -e RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS} \
+        -e RABBITMQ_USER=${RABBITMQ_USER} \
+        -e RABBITMQ_PASS=${RABBITMQ_PASS} \
         rabbitmq:management
 fi
 
@@ -27,4 +27,4 @@ until curl -s -f http://localhost:${RABBITMQ_MANAGEMENT_PORT} >/dev/null 2>&1; d
     sleep 1
 done
 
-echo "RabbitMQ is running (credentials: ${RABBITMQ_DEFAULT_USER}/${RABBITMQ_DEFAULT_PASS}). Management console available at http://localhost:${RABBITMQ_MANAGEMENT_PORT}"
+echo "RabbitMQ is running (credentials: ${RABBITMQ_USER}/${RABBITMQ_PASS}). Management console available at http://localhost:${RABBITMQ_MANAGEMENT_PORT}"

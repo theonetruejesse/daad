@@ -16,9 +16,9 @@ DAILY_LOG_CHANNEL = 1320122496363532310
 IS_TESTING_RABBITMQ_PROD = False  # change this for when testing connections
 
 LOCAL_RABBITMQ_CONFIG = {
-    "user": "guest",
-    "password": "guest",
-    "host": "localhost",
-    "port": "5672",
-    "management_port": "15672",
+    "RABBITMQ_USER": "guest",
+    "RABBITMQ_PASS": "guest",
+    "RABBITMQ_HOST": "localhost",
+    "RABBITMQ_PORT": "5672",
+    "RABBITMQ_MANAGEMENT_PORT": "15672",
 }

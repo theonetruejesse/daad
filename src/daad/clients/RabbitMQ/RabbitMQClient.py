@@ -10,52 +10,64 @@ from src.daad.helpers import get_file_path
 
 
 class RabbitMQClient(AppClient):
+    """
+    Singleton client for RabbitMQ operations.
+    Handles connection management and provides high-level messaging pub/sub operations.
+    """
+
     def __init__(self):
-        """
-        can't inherit broker directly because of metaclass conflict:
-        the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
-        """
-        self.broker = RabbitMQBroker()
+        # can't inherit broker directly because of metaclass conflict:
+        # the metaclass of a derived class must be a (non-strict) subclass of the metaclasses of all its bases
+        self.broker: RabbitMQBroker | None = None
+        self.connection = None
 
     async def _setup(self):
+        """Initialize RabbitMQ connection, channel, and setup broker"""
         if not __prod__ and not IS_TESTING_RABBITMQ_PROD:
             self._start_local_rabbitmq()
 
-        connection = await aio_pika.connect_robust(self._get_connection_string())
-        self.broker.channel = await connection.channel()
+        self.connection = await aio_pika.connect_robust(self._get_connection_string())
+        channel = await self.connection.channel()
+
+        self.broker = RabbitMQBroker(channel)
+        await self.broker.setup_exchange()
         print(f"RabbitMQClient connected to broker channel: {self.broker.channel}")
 
     def _start_local_rabbitmq(self):
+        """Start local RabbitMQ server for development"""
         env = os.environ.copy()
-        config = LOCAL_RABBITMQ_CONFIG
-        env.update(
-            {
-                "RABBITMQ_DEFAULT_USER": config["user"],
-                "RABBITMQ_DEFAULT_PASS": config["password"],
-                "RABBITMQ_PORT": config["port"],
-                "RABBITMQ_MANAGEMENT_PORT": config["management_port"],
-            }
-        )
+        env.update(LOCAL_RABBITMQ_CONFIG)
         subprocess.run(
             ["bash", get_file_path("start_rabbitmq.sh")], env=env, check=True
         )
 
     def _get_connection_string(self):
-        config = LOCAL_RABBITMQ_CONFIG
+        """Get appropriate RabbitMQ connection string based on environment"""
         if __prod__:
             return os.getenv("RABBITMQ_PRIVATE_URL")
         elif IS_TESTING_RABBITMQ_PROD:
             return os.getenv("RABBITMQ_URL")
         else:
-            return f"amqp://{config['user']}:{config['password']}@{config['host']}:{config['port']}/"
+            config = LOCAL_RABBITMQ_CONFIG
+            return f"amqp://{config['RABBITMQ_USER']}:{config['RABBITMQ_PASS']}@{config['RABBITMQ_HOST']}:{config['RABBITMQ_PORT']}/"
 
-    """ Broker Bindings """
+    async def cleanup(self):
+        """Cleanup resources on shutdown"""
+        if self.broker.channel:
+            await self.broker.channel.close()
+        if self.connection:
+            await self.connection.close()
+        await self.broker.cleanup()
+
+    def _channel_connect_exception(self):
+        return Exception("Channel not connected")
+
+    """Broker Bindings"""
 
     async def publish(self, routing_key: str, message: str):
+        """Publish a message to a specific routing key"""
         await self.broker.publish(routing_key, message)
 
-    async def consume(self, queue_name: str, routing_key: str, callback):
-        await self.broker.consume(queue_name, routing_key, callback)
-
-    async def start_consuming(self, queue_name: str, routing_key: str, callback):
-        await self.broker.start_consuming(queue_name, routing_key, callback)
+    async def subscribe(self, queue_name: str, routing_key: str, callback):
+        """Start consuming messages from a queue with specified routing key"""
+        await self.broker.subscribe(queue_name, routing_key, callback)

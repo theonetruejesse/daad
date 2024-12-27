@@ -11,54 +11,62 @@ from src.daad.constants import __prod__
 load_dotenv()
 
 
-def run():
-    print("Dasein says hello!\n")
+async def main():
+    """Main application coroutine"""
+    clients = []
+    try:
+        # Initialize clients concurrently
+        clients = await asyncio.gather(
+            RabbitMQClient.instance(),
+            DiscordClient.instance(),
+            ServerClient.instance(),
+        )
 
-    async def main():
-        try:
-            # Initialize RabbitMQ first since others depend on it
-            rabbitmq = await RabbitMQClient.instance()
+        # Keep the program running
+        await asyncio.Event().wait()
 
-            # Initialize other clients concurrently
-            discord, server = await asyncio.gather(
-                DiscordClient.instance(), ServerClient.instance()
-            )
-
-            # Store all clients for cleanup
-            clients = [rabbitmq, discord, server]
-
-            # Keep the program running forever
-            await asyncio.Future()
-
-        except KeyboardInterrupt:
-            print("\nShutting down gracefully...")
-        finally:
-            # Run cleanup with timeout
-            print("Running cleanup...")
+    except asyncio.CancelledError:
+        print("\nReceived shutdown signal...")
+    except Exception as e:
+        print(f"\nError occurred: {str(e)}")
+        raise
+    finally:
+        if clients:
+            print("\nRunning cleanup...")
             try:
+                # Run cleanup with timeout
                 await asyncio.wait_for(
-                    asyncio.gather(*(client.cleanup() for client in clients)),
+                    asyncio.gather(
+                        *(client.cleanup() for client in clients),
+                        return_exceptions=True,
+                    ),
                     timeout=10.0,
                 )
+                print("Cleanup complete")
             except asyncio.TimeoutError:
                 print("Cleanup timed out, forcing exit...")
-            finally:
-                print("Cleanup complete")
 
-    # Handle the event loop
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+
+def run():
+    """Entry point function"""
+    print("Dasein says hello!\n")
+
+    # Setup event loop
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
 
     try:
+        # Run main with proper signal handling
         loop.run_until_complete(main())
     except KeyboardInterrupt:
-        pass
+        print("\nReceived keyboard interrupt...")
     finally:
-        loop.run_until_complete(loop.shutdown_asyncgens())
-        loop.close()
+        try:
+            # Clean shutdown of the event loop
+            pending = asyncio.all_tasks(loop)
+            loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+        finally:
+            loop.close()
 
 
 if __name__ == "__main__":
