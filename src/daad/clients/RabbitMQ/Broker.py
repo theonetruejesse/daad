@@ -93,7 +93,9 @@ class RabbitMQBroker:
     async def cleanup(self):
         """Cleanup all resources"""
         # Cancel all consuming tasks
-        for task in self._consuming_tasks:
+        for task in list(
+            self._consuming_tasks
+        ):  # Create a list copy to avoid mutation issues
             if not task.done():
                 task.cancel()
 
@@ -101,12 +103,12 @@ class RabbitMQBroker:
         if self._consuming_tasks:
             await asyncio.gather(*self._consuming_tasks, return_exceptions=True)
 
-        # Cleanup channel
-        if self.channel:
+        # Close the channel
+        if self.channel and not self.channel.is_closed:
             try:
                 await self.channel.close()
-            except Exception:
-                pass  # Ignore cleanup errors
+            except Exception as e:
+                print(f"Error closing RabbitMQ channel: {str(e)}")
 
     def _channel_connect_exception(self):
         return Exception("Channel not connected")

@@ -31,5 +31,4 @@ Using RabbitMQ for the hell of it.
 - fix the src import issue (pyproject.toml based)
 - toml setup for dev dependencies
 - fix my vim setup
-- cleanup for rabbitmq and general main handling
 - logger

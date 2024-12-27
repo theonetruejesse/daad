@@ -21,7 +21,7 @@ class CronClient(AppClient):
 
         self._collect_decorated_jobs()
         self.scheduler.start()
-        print("[CronClient] -> CronScheduler started.")
+        print("CronClient setup complete")
 
     async def cleanup(self) -> None:
         """
@@ -30,7 +30,7 @@ class CronClient(AppClient):
         if self.scheduler:
             self.scheduler.stop()
             self.scheduler = None
-        print("[CronClient] -> Cleanup complete.")
+        print("CronClient cleanup complete")
 
     def add_cron_job(
         self,

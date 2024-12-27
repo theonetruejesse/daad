@@ -11,6 +11,7 @@ from src.daad.constants import PORT
 class ServerClient(ServerRouter, AppClient):
     def __init__(self):
         self.rabbitmq: RabbitMQClient | None = None
+        self.server: uvicorn.Server | None = None
         ServerRouter.__init__(self)
 
     async def _setup(self):
@@ -22,8 +23,8 @@ class ServerClient(ServerRouter, AppClient):
         config = uvicorn.Config(
             self.get_app(), host="0.0.0.0", port=PORT, loop="asyncio"
         )
-        server = uvicorn.Server(config)
-        self.server_task = asyncio.create_task(server.serve())
+        self.server = uvicorn.Server(config)
+        self.server_task = asyncio.create_task(self.server.serve())
 
         print(f"Server started on port {PORT}")
 
@@ -40,9 +41,15 @@ class ServerClient(ServerRouter, AppClient):
 
     async def cleanup(self):
         """Cleanup server resources"""
+        if self.server and self.server.started:
+            print("Stopping FastAPI server...")
+            await self.server.shutdown()  # Explicitly stop the server
+
         if hasattr(self, "server_task") and not self.server_task.done():
             self.server_task.cancel()
             try:
                 await self.server_task
             except asyncio.CancelledError:
                 pass
+
+        print("ServerClient cleanup complete")

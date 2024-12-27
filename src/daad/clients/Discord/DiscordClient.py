@@ -73,16 +73,26 @@ class DiscordClient(DiscordBot, AppClient):
     async def cleanup(self):
         """Cleanup resources on shutdown"""
         # Close Discord connection
-        await self.close()
+        try:
+            await self.close()
+        except Exception as e:
+            print(f"Error closing Discord connection: {str(e)}")
 
         # Cancel Discord connection task
-        if hasattr(self, "discord_task"):
+        if hasattr(self, "discord_task") and not self.discord_task.done():
             self.discord_task.cancel()
             try:
                 await self.discord_task
             except asyncio.CancelledError:
                 pass
+            except Exception as e:
+                print(f"Error canceling Discord task: {str(e)}")
 
         # Cleanup RabbitMQ
         if self.rabbitmq:
-            await self.rabbitmq.cleanup()
+            try:
+                await self.rabbitmq.cleanup()
+            except Exception as e:
+                print(f"Error cleaning up RabbitMQ in DiscordClient: {str(e)}")
+
+        print("DiscordClient cleanup complete")

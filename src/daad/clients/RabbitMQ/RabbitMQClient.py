@@ -53,11 +53,24 @@ class RabbitMQClient(AppClient):
 
     async def cleanup(self):
         """Cleanup resources on shutdown"""
-        if self.broker.channel:
-            await self.broker.channel.close()
-        if self.connection:
-            await self.connection.close()
-        await self.broker.cleanup()
+        # Cancel and cleanup all broker resources
+        if self.broker:
+            await self.broker.cleanup()
+
+        # Close the channel if it's open
+        if self.broker and self.broker.channel and not self.broker.channel.is_closed:
+            try:
+                await self.broker.channel.close()
+            except Exception as e:
+                print(f"Error closing RabbitMQ channel: {str(e)}")
+
+        # Close the connection if it's open
+        if self.connection and not self.connection.is_closed:
+            try:
+                await self.connection.close()
+            except Exception as e:
+                print(f"Error closing RabbitMQ connection: {str(e)}")
+        print("RabbitMQClient cleanup complete")
 
     def _channel_connect_exception(self):
         return Exception("Channel not connected")

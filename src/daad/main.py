@@ -1,12 +1,13 @@
 import asyncio
+import signal
 
 from dotenv import load_dotenv
 
+from src.daad.clients import AppClient
 from src.daad.clients.Cron.CronClient import CronClient
 from src.daad.clients.Discord.DiscordClient import DiscordClient
 from src.daad.clients.RabbitMQ.RabbitMQClient import RabbitMQClient
 from src.daad.clients.Server.ServerClient import ServerClient
-from src.daad.constants import __prod__
 
 # Load environment variables
 load_dotenv()
@@ -24,11 +25,20 @@ async def main():
             CronClient.instance(),
         )
 
-        # Keep the program running
-        await asyncio.Event().wait()
+        # Create a shutdown event for signal handling
+        shutdown_event = asyncio.Event()
 
-    except asyncio.CancelledError:
-        print("\nReceived shutdown signal...")
+        # Define signal handler to set shutdown event
+        def handle_shutdown(*_):
+            print("\nReceived shutdown signal...")
+            shutdown_event.set()
+
+        # Register signal handlers for graceful shutdown
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            asyncio.get_running_loop().add_signal_handler(sig, handle_shutdown)
+
+        await shutdown_event.wait()  # Wait until a shutdown signal is received
+
     except Exception as e:
         print(f"\nError occurred: {str(e)}")
         raise
@@ -47,6 +57,8 @@ async def main():
                 print("Cleanup complete")
             except asyncio.TimeoutError:
                 print("Cleanup timed out, forcing exit...")
+            except Exception as e:
+                print(f"Error during cleanup: {str(e)}")
 
 
 def run():
