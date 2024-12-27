@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict
 from src.daad.clients.AppClient import AppClient
 from src.daad.clients.Cron.Scheduler import CronScheduler, cron_job
 from src.daad.clients.RabbitMQ.RabbitMQClient import RabbitMQClient
-from src.daad.constants import DAILY_LOG_CHANNEL
+from src.daad.constants import DAILY_LOG_CHANNEL, ISSUE_LOG_CHANNEL
 
 
 class CronClient(AppClient):
@@ -44,15 +44,22 @@ class CronClient(AppClient):
 
     @cron_job(schedule={"hour": "8", "minute": "0"})  # Runs daily at 8:00
     async def send_morning_log(self) -> None:
-        """
-        Send a minute-by-minute log to Discord.
-        """
         if not self.rabbitmq:
             raise RuntimeError("RabbitMQClient not available.")
 
         routing_key = "discord.notifications"
         message = f"{DAILY_LOG_CHANNEL}:Good morning!"
         print(f"[CronClient] -> send_morning_log -> {message}")
+        await self.rabbitmq.publish(routing_key, message)
+
+    @cron_job(schedule={"minute": "1"})  # Runs every minute
+    async def canary_log(self) -> None:
+        if not self.rabbitmq:
+            raise RuntimeError("RabbitMQClient not available.")
+
+        routing_key = "discord.notifications"
+        message = f"{ISSUE_LOG_CHANNEL}:Canary log!"
+        print(f"[CronClient] -> canary_log -> {message}")
         await self.rabbitmq.publish(routing_key, message)
 
     #
