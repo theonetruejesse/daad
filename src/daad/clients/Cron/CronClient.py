@@ -52,15 +52,15 @@ class CronClient(AppClient):
         print(f"[CronClient] -> send_morning_log -> {message}")
         await self.rabbitmq.publish(routing_key, message)
 
-    @cron_job(schedule={"minute": "1"})  # Runs every minute
-    async def canary_log(self) -> None:
-        if not self.rabbitmq:
-            raise RuntimeError("RabbitMQClient not available.")
+    # @cron_job(schedule={"minute": "1"})  # Runs every hour
+    # async def canary_log(self) -> None:
+    #     if not self.rabbitmq:
+    #         raise RuntimeError("RabbitMQClient not available.")
 
-        routing_key = "discord.notifications"
-        message = f"{ISSUE_LOG_CHANNEL}:Canary log!"
-        print(f"[CronClient] -> canary_log -> {message}")
-        await self.rabbitmq.publish(routing_key, message)
+    #     routing_key = "discord.notifications"
+    #     message = f"{ISSUE_LOG_CHANNEL}:Canary log!"
+    #     print(f"[CronClient] -> canary_log -> {message}")
+    #     await self.rabbitmq.publish(routing_key, message)
 
     #
     # Internal method to discover and register any decorated methods from above
