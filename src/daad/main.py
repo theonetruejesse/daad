@@ -3,10 +3,10 @@ import signal
 
 from dotenv import load_dotenv
 
-from src.daad.clients import AppClient
 from src.daad.clients.Cron.CronClient import CronClient
 from src.daad.clients.Discord.DiscordClient import DiscordClient
 from src.daad.clients.RabbitMQ.RabbitMQClient import RabbitMQClient
+from src.daad.clients.Redis.RedisClient import RedisClient
 from src.daad.clients.Server.ServerClient import ServerClient
 
 # Load environment variables
@@ -23,6 +23,7 @@ async def main():
             DiscordClient.instance(),
             ServerClient.instance(),
             CronClient.instance(),
+            RedisClient.instance(),
         )
 
         # Create a shutdown event for signal handling

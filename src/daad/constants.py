@@ -23,3 +23,12 @@ LOCAL_RABBITMQ_CONFIG = {
     "RABBITMQ_PORT": "5672",
     "RABBITMQ_MANAGEMENT_PORT": "15672",
 }
+
+# Redis credentials
+
+IS_TESTING_REDIS_PROD = False  # change this for when testing connections
+
+LOCAL_REDIS_CONFIG = {
+    "REDIS_HOST": "localhost",
+    "REDIS_PORT": "6379",
+}

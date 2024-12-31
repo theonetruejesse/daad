@@ -6,7 +6,7 @@ Using RabbitMQ for the hell of it.
 ## Requirements
 
 - Make sure you have [uv](https://docs.astral.sh/uv/) installed.
-- Make sure you have Docker (needed for RabbitMQ) installed and running.
+- Make sure you have Docker (needed for RabbitMQ, Redis) installed and running.
 
 ### Keys
 
